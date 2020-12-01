@@ -1,10 +1,10 @@
 import os
 import json
 import jsonschema
-from jsonschema import validate, Draft3Validator
+from jsonschema import Draft3Validator
 
 
-def check_data(path_schema, path_event, path_log):
+def validate_data(path_schema, path_event, path_log):
     schemas = []
     with os.scandir(path_schema) as entries:
         for entry in entries:
@@ -21,14 +21,23 @@ def check_data(path_schema, path_event, path_log):
                     try:
                         Draft3Validator(schema['schema']).validate(data)
                     except jsonschema.exceptions.ValidationError as err:
-                        log.append(dict(file=entry.name, schema_file=schema['schema_file'], err=err))
+                        log.append(dict(file=entry.name, schema_file=schema['schema_file'], err=err.message))
 
-    with open(path_log, 'w+') as file:
-        for line in log:
-            file.write(str(line) + '\n')
+    # Вывод для README
+    print('Файл данных | Файл схемы | Ошибки')
+    print('----------- | ---------- | ------')
+    for line in log:
+        # print(line['err'])
+        print(f"{line['file']} | {line['schema_file']} | {line['err']}")
+
+    # Вывод в файл
+    # with open(path_log, 'w+') as file:
+    #     for line in log:
+    #         file.write(str(line) + '\n')
 
 
 if __name__ == '__main__':
-    check_data('task_folder/schema', 'task_folder/event/', 'log.txt')
+    validate_data('task_folder/schema', 'task_folder/event/', 'log.txt')
+
 
 
