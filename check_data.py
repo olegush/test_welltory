@@ -27,13 +27,12 @@ def validate_data(path_schema, path_event, path_log):
     print('Файл данных | Файл схемы | Ошибки')
     print('----------- | ---------- | ------')
     for line in log:
-        # print(line['err'])
         print(f"{line['file']} | {line['schema_file']} | {line['err']}")
 
     # Вывод в файл
-    # with open(path_log, 'w+') as file:
-    #     for line in log:
-    #         file.write(str(line) + '\n')
+    with open(path_log, 'w+') as file:
+        for line in log:
+            file.write(str(line) + '\n')
 
 
 if __name__ == '__main__':
