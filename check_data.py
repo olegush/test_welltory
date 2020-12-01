@@ -4,7 +4,7 @@ import jsonschema
 from jsonschema import validate, Draft3Validator
 
 
-def check_data(path_schema, path_event):
+def check_data(path_schema, path_event, path_log):
     schemas = []
     with os.scandir(path_schema) as entries:
         for entry in entries:
@@ -22,11 +22,13 @@ def check_data(path_schema, path_event):
                         Draft3Validator(schema['schema']).validate(data)
                     except jsonschema.exceptions.ValidationError as err:
                         log.append(dict(file=entry.name, schema_file=schema['schema_file'], err=err))
-    for l in log:
-        print(l)
+
+    with open(path_log, 'w+') as file:
+        for line in log:
+            file.write(str(line) + '\n')
 
 
 if __name__ == '__main__':
-    check_data('task_folder/schema', 'task_folder/event/')
+    check_data('task_folder/schema', 'task_folder/event/', 'log.txt')
 
 
